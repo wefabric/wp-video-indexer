@@ -1,0 +1,26 @@
+{
+    "name": "wefabric/wp-video-indexer",
+    "description": "Indexes platform videos in WordPress post content as VideoObject schema markup.",
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Leo Flapper",
+            "email": "leo@wefabric.nl"
+        }
+    ],
+    "require": {
+        "php": ">=7.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Wefabric\\WPVideoIndexer\\": "./src"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Wefabric\\WPVideoIndexer\\Providers\\ServiceProvider"
+            ]
+        }
+    }
+}

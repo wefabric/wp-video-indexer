@@ -1,0 +1,60 @@
+<?php
+
+namespace Wefabric\WPVideoIndexer\Services;
+
+class YouTubeSchemaService implements VideoSchemaServiceInterface
+{
+    public function matches(string $url): bool
+    {
+        return str_contains($url, 'youtube.com') || str_contains($url, 'youtu.be');
+    }
+
+    public function extractId(string $url): ?string
+    {
+        $parts = parse_url($url);
+        parse_str($parts['query'] ?? '', $query);
+        return $query['v'] ?? null;
+    }
+
+    public function fetchSchema(string $url): array
+    {
+        $oembed_url = 'https://www.youtube.com/oembed?url=' . urlencode($url) . '&format=json';
+
+        $response = wp_remote_get($oembed_url, ['timeout' => 2]);
+
+        if (is_wp_error($response)) {
+            return $this->fallbackSchema($url);
+        }
+
+        $data = json_decode(wp_remote_retrieve_body($response), true);
+
+        if (empty($data['title'])) {
+            return $this->fallbackSchema($url);
+        }
+
+        return [
+            '@context'     => 'https://schema.org',
+            '@type'        => 'VideoObject',
+            'name'         => $data['title'],
+            'description'  => $data['title'],
+            'thumbnailUrl' => $data['thumbnail_url'] ?? '',
+            'embedUrl'     => $url,
+            'contentUrl'   => $url,
+            'uploadDate'   => date('c'),
+        ];
+    }
+
+    public function fallbackSchema(string $url): array
+    {
+        return [
+            '@context'     => 'https://schema.org',
+            '@type'        => 'VideoObject',
+            'name'         => 'YouTube Video',
+            'description'  => 'Video content',
+            'thumbnailUrl' => '',
+            'embedUrl'     => $url,
+            'contentUrl'   => $url,
+            'uploadDate'   => date('c'),
+        ];
+    }
+}
