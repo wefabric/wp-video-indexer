@@ -56,15 +56,25 @@ class YouTubeSchemaServiceTest extends TestCase
         );
     }
 
-    public function test_returns_null_when_no_v_param(): void
+    public function test_extracts_id_from_embed_url(): void
     {
-        $this->assertNull($this->service->extractId('https://www.youtube.com/channel/UCxxx'));
+        $this->assertSame(
+            'l-_7ckZ8i3w',
+            $this->service->extractId('https://www.youtube.com/embed/l-_7ckZ8i3w')
+        );
     }
 
-    public function test_returns_null_for_youtu_be_url(): void
+    public function test_extracts_id_from_youtu_be_url(): void
     {
-        // youtu.be URLs have the ID in the path, not the query string
-        $this->assertNull($this->service->extractId('https://youtu.be/dQw4w9WgXcQ'));
+        $this->assertSame(
+            'dQw4w9WgXcQ',
+            $this->service->extractId('https://youtu.be/dQw4w9WgXcQ')
+        );
+    }
+
+    public function test_returns_null_for_non_video_url(): void
+    {
+        $this->assertNull($this->service->extractId('https://www.youtube.com/channel/UCxxx'));
     }
 
     // --- fetchSchema() ---

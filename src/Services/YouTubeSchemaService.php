@@ -11,9 +11,11 @@ class YouTubeSchemaService implements VideoSchemaServiceInterface
 
     public function extractId(string $url): ?string
     {
-        $parts = parse_url($url);
-        parse_str($parts['query'] ?? '', $query);
-        return $query['v'] ?? null;
+        if (preg_match('/(?:youtube\.com\/(?:embed\/|v\/|watch\?v=)|youtu\.be\/)([a-zA-Z0-9_-]+)/', $url, $matches)) {
+            return $matches[1];
+        }
+
+        return null;
     }
 
     public function fetchSchema(string $url): array
