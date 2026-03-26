@@ -111,4 +111,58 @@ class VideoSchemaCacheServiceTest extends TestCase
 
         $this->addToAssertionCount(1);
     }
+
+    public function test_finds_video_url_in_acf_fields(): void
+    {
+        $url = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+
+        Functions\when('get_post_field')->justReturn('');
+        Functions\when('get_fields')->justReturn([
+            'field_60d5e7f3c2966' => '',
+            'field_60afe3979d1ae' => [
+                'row-0' => [
+                    'acf_fc_layout'       => 'textblock',
+                    'field_60afe836076a6' => 'Some text with a video ' . $url . ' check it out',
+                ],
+            ],
+        ]);
+        Functions\when('get_post_meta')->justReturn([]);
+        Functions\when('wp_remote_get')->justReturn(['response' => ['code' => 200]]);
+        Functions\when('is_wp_error')->justReturn(false);
+        Functions\when('wp_remote_retrieve_body')->justReturn(json_encode([
+            'title'         => 'Never Gonna Give You Up',
+            'thumbnail_url' => 'https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg',
+        ]));
+        Functions\expect('update_post_meta')
+            ->once()
+            ->andReturnUsing(function ($post_id, $key, $schemas) use ($url) {
+                $this->assertArrayHasKey($url, $schemas);
+                $this->assertSame('Never Gonna Give You Up', $schemas[$url]['name']);
+                return true;
+            });
+
+        $this->service->cache(1);
+    }
+
+    public function test_skips_acf_lookup_when_get_fields_returns_empty(): void
+    {
+        $url = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+
+        Functions\when('get_post_field')->justReturn($url);
+        Functions\when('get_fields')->justReturn(false);
+        Functions\when('get_post_meta')->justReturn([]);
+        Functions\when('wp_remote_get')->justReturn(['response' => ['code' => 200]]);
+        Functions\when('is_wp_error')->justReturn(false);
+        Functions\when('wp_remote_retrieve_body')->justReturn(json_encode([
+            'title' => 'Never Gonna Give You Up',
+        ]));
+        Functions\expect('update_post_meta')
+            ->once()
+            ->andReturnUsing(function ($post_id, $key, $schemas) use ($url) {
+                $this->assertArrayHasKey($url, $schemas);
+                return true;
+            });
+
+        $this->service->cache(1);
+    }
 }

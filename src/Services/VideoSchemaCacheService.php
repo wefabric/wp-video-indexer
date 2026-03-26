@@ -27,7 +27,7 @@ class VideoSchemaCacheService
             return;
         }
 
-        $content = get_post_field('post_content', $post_id);
+        $content = $this->getSearchableContent($post_id);
         if (!$content) {
             return;
         }
@@ -60,5 +60,32 @@ class VideoSchemaCacheService
         }
 
         update_post_meta($post_id, self::META_KEY, $schemas);
+    }
+
+    private function getSearchableContent(int $post_id): string
+    {
+        $parts = [get_post_field('post_content', $post_id)];
+
+        if (function_exists('get_fields')) {
+            $fields = get_fields($post_id);
+            if (!empty($fields)) {
+                $parts[] = $this->flattenToString($fields);
+            }
+        }
+
+        return implode(' ', array_filter($parts));
+    }
+
+    private function flattenToString($value): string
+    {
+        if (is_string($value)) {
+            return $value;
+        }
+
+        if (is_array($value)) {
+            return implode(' ', array_map([$this, 'flattenToString'], $value));
+        }
+
+        return '';
     }
 }
