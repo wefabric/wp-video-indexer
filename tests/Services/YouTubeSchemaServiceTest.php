@@ -97,7 +97,7 @@ class YouTubeSchemaServiceTest extends TestCase
         $this->assertSame('Never Gonna Give You Up', $schema['description']);
         $this->assertSame('https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg', $schema['thumbnailUrl']);
         $this->assertSame($url, $schema['embedUrl']);
-        $this->assertSame($url, $schema['contentUrl']);
+        $this->assertSame('https://www.youtube.com/watch?v=dQw4w9WgXcQ', $schema['contentUrl']);
     }
 
     public function test_fetch_schema_returns_fallback_on_wp_error(): void
@@ -134,7 +134,7 @@ class YouTubeSchemaServiceTest extends TestCase
 
         $this->assertSame('My Video', $schema['name']);
         $this->assertSame($embed_url, $schema['embedUrl']);
-        $this->assertSame($embed_url, $schema['contentUrl']);
+        $this->assertSame($watch_url, $schema['contentUrl']);
     }
 
     public function test_fetch_schema_returns_fallback_when_response_has_no_title(): void

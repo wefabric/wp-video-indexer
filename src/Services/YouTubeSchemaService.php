@@ -42,7 +42,7 @@ class YouTubeSchemaService implements VideoSchemaServiceInterface
             'description'  => $data['title'],
             'thumbnailUrl' => $data['thumbnail_url'] ?? '',
             'embedUrl'     => $url,
-            'contentUrl'   => $url,
+            'contentUrl'   => $watch_url,
             'uploadDate'   => date('c'),
         ];
     }
