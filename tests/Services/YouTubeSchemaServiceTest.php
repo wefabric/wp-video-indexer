@@ -113,6 +113,30 @@ class YouTubeSchemaServiceTest extends TestCase
         $this->assertSame($url, $schema['embedUrl']);
     }
 
+    public function test_fetch_schema_uses_watch_url_for_oembed_when_given_embed_url(): void
+    {
+        $embed_url = 'https://www.youtube.com/embed/l-_7ckZ8i3w';
+        $watch_url = 'https://www.youtube.com/watch?v=l-_7ckZ8i3w';
+
+        Functions\expect('wp_remote_get')
+            ->once()
+            ->andReturnUsing(function ($oembed_url) use ($watch_url) {
+                $this->assertStringContainsString(urlencode($watch_url), $oembed_url);
+                return ['response' => ['code' => 200]];
+            });
+        Functions\when('is_wp_error')->justReturn(false);
+        Functions\when('wp_remote_retrieve_body')->justReturn(json_encode([
+            'title'         => 'My Video',
+            'thumbnail_url' => 'https://i.ytimg.com/vi/l-_7ckZ8i3w/hqdefault.jpg',
+        ]));
+
+        $schema = $this->service->fetchSchema($embed_url);
+
+        $this->assertSame('My Video', $schema['name']);
+        $this->assertSame($embed_url, $schema['embedUrl']);
+        $this->assertSame($embed_url, $schema['contentUrl']);
+    }
+
     public function test_fetch_schema_returns_fallback_when_response_has_no_title(): void
     {
         Functions\when('wp_remote_get')->justReturn(['response' => ['code' => 200]]);

@@ -20,7 +20,8 @@ class YouTubeSchemaService implements VideoSchemaServiceInterface
 
     public function fetchSchema(string $url): array
     {
-        $oembed_url = 'https://www.youtube.com/oembed?url=' . urlencode($url) . '&format=json';
+        $watch_url  = 'https://www.youtube.com/watch?v=' . $this->extractId($url);
+        $oembed_url = 'https://www.youtube.com/oembed?url=' . urlencode($watch_url) . '&format=json';
 
         $response = wp_remote_get($oembed_url, ['timeout' => 2]);
 
