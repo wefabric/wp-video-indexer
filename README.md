@@ -21,14 +21,14 @@ Add the VCS repository and require the package in your root `composer.json`:
     }
 ],
 "require": {
-    "wefabric/wp-video-indexer": "dev-main"
+    "wefabric/wp-video-indexer": "^1.0"
 }
 ```
 
 Then run:
 
 ```bash
-composer require wefabric/wp-video-indexer:dev-main
+composer require wefabric/wp-video-indexer:^1.0
 php artisan package:discover
 ```
 
