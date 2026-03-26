@@ -6,7 +6,7 @@ class YouTubeSchemaService implements VideoSchemaServiceInterface
 {
     public function matches(string $url): bool
     {
-        return str_contains($url, 'youtube.com') || str_contains($url, 'youtu.be');
+        return strpos($url, 'youtube.com') !== false || strpos($url, 'youtu.be') !== false;
     }
 
     public function extractId(string $url): ?string

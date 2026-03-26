@@ -11,41 +11,30 @@ Indexes YouTube and Vimeo videos found in WordPress post content as `VideoObject
 
 ## Installation
 
-Add the path repository and require the package in your root `composer.json`:
+Add the VCS repository and require the package in your root `composer.json`:
 
 ```json
 "repositories": [
     {
-        "type": "path",
-        "url": "./packages/wefabric/wp-video-indexer"
+        "type": "vcs",
+        "url": "git@github.com:wefabric/wp-video-indexer.git"
     }
 ],
 "require": {
-    "wefabric/wp-video-indexer": "@dev"
+    "wefabric/wp-video-indexer": "dev-main"
 }
 ```
 
 Then run:
 
 ```bash
-composer require wefabric/wp-video-indexer:@dev
+composer require wefabric/wp-video-indexer:dev-main
 php artisan package:discover
 ```
 
-When the package is published to a VCS (GitHub/Bitbucket), replace the path repository with a VCS entry:
-
-```json
-{
-    "type": "vcs",
-    "url": "git@github.com:wefabric/wp-video-indexer.git"
-}
-```
-
-And update the version constraint accordingly.
-
 ## Requirements
 
-- PHP >= 8.0
+- PHP >= 7.4
 - WordPress
 - Themosis framework (for hook registration and service container)
 - `wefabric/wp-support` (for `WPSupport::addHooks`)
@@ -110,6 +99,15 @@ protected array $services = [
 ```
 
 No other changes are needed.
+
+## Testing
+
+```bash
+composer install
+./vendor/bin/phpunit
+```
+
+Tests cover `matches()`, `extractId()`, and `fetchSchema()` (including fallback behaviour) for each platform service. WordPress functions are mocked using [Brain Monkey](https://github.com/Brain-WP/BrainMonkey).
 
 ## Post meta
 

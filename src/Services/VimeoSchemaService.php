@@ -6,7 +6,7 @@ class VimeoSchemaService implements VideoSchemaServiceInterface
 {
     public function matches(string $url): bool
     {
-        return str_contains($url, 'vimeo.com');
+        return strpos($url, 'vimeo.com') !== false;
     }
 
     public function extractId(string $url): ?string
