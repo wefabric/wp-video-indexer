@@ -11,21 +11,7 @@ Indexes YouTube and Vimeo videos found in WordPress post content as `VideoObject
 
 ## Installation
 
-Add the VCS repository and require the package in your root `composer.json`:
-
-```json
-"repositories": [
-    {
-        "type": "vcs",
-        "url": "git@github.com:wefabric/wp-video-indexer.git"
-    }
-],
-"require": {
-    "wefabric/wp-video-indexer": "^1.0"
-}
-```
-
-Then run:
+The package is available on [Packagist](https://packagist.org/packages/wefabric/wp-video-indexer).
 
 ```bash
 composer require wefabric/wp-video-indexer:^1.0
